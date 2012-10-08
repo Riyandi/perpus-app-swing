@@ -464,7 +464,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void mnItemNimbusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnItemNimbusActionPerformed
         try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             resetLaf();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
