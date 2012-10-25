@@ -10,13 +10,15 @@
  */
 package perpus.ui.transaksi;
 
-import java.util.ArrayList;
+import java.awt.Component;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellRenderer;
 import perpus.Main;
+import perpus.domain.Peminjaman;
 import perpus.domain.PengembalianDetail;
 import perpus.ui.TableUtil;
 import perpus.ui.tablemodel.PengembalianDetailTableModel;
@@ -29,11 +31,16 @@ public class TambahDetailPengembalianDialog extends javax.swing.JDialog {
 
     private List<PengembalianDetail> listDetail;
     private PengembalianDetail detail;
+    private Peminjaman peminjaman;
     
     /** Creates new form TambahDetailPengembalianDialog */
-    public TambahDetailPengembalianDialog(List<PengembalianDetail> listDetail) {
+    public TambahDetailPengembalianDialog(List<PengembalianDetail> listDetail, Peminjaman peminjaman) {
         super(new JFrame(), true);
         this.listDetail = listDetail;
+        this.peminjaman = peminjaman;
+        
+        System.out.println("list orig size : " + listDetail.size());
+        
         initComponents();
         setLocationRelativeTo(null);
         loadDataToTable();
@@ -45,8 +52,8 @@ public class TambahDetailPengembalianDialog extends javax.swing.JDialog {
     }
     
     private void loadDataToTable(){
-        if(listDetail != null){
-            tbl.setModel(new PengembalianDetailTableModel(listDetail));
+        if(listDetail != null && peminjaman!=null){
+            tbl.setModel(new PengembalianDetailTableModel(listDetail, peminjaman));
             TableUtil.initColumn(tbl);
             tbl.getSelectionModel().addListSelectionListener(new TableSelection());
         }
@@ -62,7 +69,18 @@ public class TambahDetailPengembalianDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tbl = new javax.swing.JTable();
+        tbl = new javax.swing.JTable() {
+            public Component prepareRenderer(
+                TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+
+                if (!isRowSelected(row)) {
+                    c.setBackground(row % 2 == 0 ? getBackground() : new java.awt.Color(237, 243, 254));
+                }
+
+                return c;
+            }
+        };
         btnBatal = new javax.swing.JButton();
         btnOK = new javax.swing.JButton();
 
@@ -78,6 +96,8 @@ public class TambahDetailPengembalianDialog extends javax.swing.JDialog {
                 "Kode Buku", "Judul Buku", "Telat", "Denda"
             }
         ));
+        tbl.setAutoscrolls(false);
+        tbl.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tbl);
 
         btnBatal.setText("Batal");
